@@ -1,56 +1,59 @@
 import Head from 'next/head'
 import Image from 'next/image'
+import Link from 'next/link'
+
 const Scenarios = ({ scenarios }) => {
-    return (
-      <>
+  return (
+    <>
       <Head>
-        <meta charset="utf-8" name="description" content="Bienvenue sur notre escape game incroyable ! rejoins-nous"/>
-        <title>Bienvenue sur notre escape game</title>
+        <meta charSet="utf-8" name="description" content="Bienvenue sur notre escape game incroyable ! rejoins-nous"/>
       </Head>
-      <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl text-center">Mes scénarios</h1>
-        <ul>
-          {scenarios.data.map((scenario) => {
-            const attributes = scenario.attributes;
-            const images = attributes?.gallery;
-            return(
-            <>
-            
-            <li key={scenario.id}>{attributes.title}</li>
-            <p>{attributes.desc}</p><br></br>
-            <section class="overflow-hidden text-neutral-700">
-                <div class="container mx-auto px-5 py-2 lg:px-32 lg:pt-12">
-                <div class="-m-1 flex flex-wrap md:-m-2">
-            {images.data.map((image) => (
-              
-                  
-                    <div class="flex w-1/3 flex-wrap">
-                      <div class="w-full p-1 md:p-2">
-                        <Image width={500} height={500}  alt="gallery"
-                      class="block h-full w-full rounded-lg object-cover object-center" src={"http://localhost:1337" + image.attributes?.url} />
-                    </div>
-                  </div>
-                
-              
-            ))} 
-            </div>    
+      <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl text-center my-8">Mes scénarios</h1>
+      <div className="mx-4 grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        {scenarios.data.map((scenario) => {
+          const attributes = scenario.attributes;
+          const images = attributes?.gallery;
+          const MAX_DESCRIPTION_LENGTH = 100; // définir la longueur maximale de la description
+          const description = attributes.desc.length > MAX_DESCRIPTION_LENGTH ? attributes.desc.slice(0, MAX_DESCRIPTION_LENGTH) + '...' : attributes.desc; // couper la description si elle dépasse la longueur maximale
+          return (
+            <div key={scenario.id} className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center">
+              <Link href={`/scenarios/${scenario.id}`}>
+                <div className="block rounded-lg rounded-b-none overflow-hidden">
+                  {images && images.data[0] && (
+                    <Image
+                      src={"http://localhost:1337" + images.data[0].attributes?.url}
+                      alt={attributes.title}
+                      width={500}
+                      height={500}
+                      layout="responsive"
+                      className="object-cover object-center w-full h-full"
+                    />
+                  )}
+                  {!images && (
+                    <div className="bg-gray-300 h-64 w-full"></div>
+                  )}
+                </div>
+              </Link>
+              <div className="p-4 flex flex-col items-center">
+                <Link href={`/scenarios/${scenario.id}`}>
+                  <span className="block text-xl font-semibold text-gray-900 cursor-pointer text-center mb-2">{attributes.title}</span>
+                </Link>
+                <p className="text-gray-600">{description}</p>
+              </div>
             </div>
-            </section>       
-            </>
           )
         })}
-        </ul>
-      </>
-    );
-  };
-  
-
+      </div>
+    </>
+  );
+};
 
 export async function getStaticProps() {
-    const res = await fetch('http://localhost:1337/api/scenarios?populate=*')
-    const scenarios = await res.json()
-    return {
-        props: {scenarios},
-    }
+  const res = await fetch('http://localhost:1337/api/scenarios?populate=*')
+  const scenarios = await res.json()
+  return {
+    props: {scenarios},
+  }
 }
    
 export default Scenarios;

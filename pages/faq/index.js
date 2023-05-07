@@ -4,7 +4,6 @@ const Messages = ({ messages }) => {
       <>
       <Head>
         <meta charset="utf-8" name="description" content="Bienvenue sur notre escape game incroyable ! rejoins-nous"/>
-        <title>Bienvenue sur notre escape game</title>
       </Head>
         <h1>FAQ</h1>
         <h2>Liste des questions</h2>
